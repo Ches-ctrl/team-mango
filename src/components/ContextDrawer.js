@@ -31,22 +31,49 @@ const ContextDrawer = ({ contextData, onContextUpdate }) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      {/* Toggle button with label */}
-      <div className="flex justify-center items-center bg-white border-t border-x border-gray-200 rounded-t-lg shadow-md mx-auto w-64 context-drawer-toggle">
-        <button 
-          onClick={toggleDrawer}
-          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none w-full justify-center"
-          aria-label={isOpen ? "Close context drawer" : "Open context drawer"}
+    <>
+      {/* Toggle button when drawer is closed */}
+      {!isOpen && (
+        <div 
+          className="context-drawer-toggle bg-white border-t border-x border-gray-200 rounded-t-lg shadow-md w-64"
+          style={{ 
+            zIndex: 999, 
+            position: 'absolute',
+            bottom: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            marginBottom: 0
+          }}
         >
-          <span className="text-sm font-medium">Spreadsheet Context</span>
-          {isOpen ? <FaChevronDown className="text-emerald-600" /> : <FaChevronUp className="text-emerald-600" />}
-        </button>
-      </div>
+          <button 
+            onClick={toggleDrawer}
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none w-full justify-center"
+            aria-label="Open context drawer"
+          >
+            <span className="text-sm font-medium">Spreadsheet Context</span>
+            <FaChevronUp className="text-emerald-600" />
+          </button>
+        </div>
+      )}
       
-      {/* Drawer content */}
+      {/* Drawer content with toggle button at top when open */}
       {isOpen && (
-        <div className="bg-white shadow-lg transition-all duration-300 ease-in-out context-drawer-content">
+        <div 
+          className="fixed bottom-0 left-0 right-0 bg-white shadow-lg context-drawer-content"
+          style={{ zIndex: 1000 }}
+        >
+          {/* Toggle button at top of drawer */}
+          <div className="border-b border-gray-200 py-2">
+            <button 
+              onClick={toggleDrawer}
+              className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:text-gray-800 focus:outline-none mx-auto"
+              aria-label="Close context drawer"
+            >
+              <span className="text-sm font-medium">Spreadsheet Context</span>
+              <FaChevronDown className="text-emerald-600" />
+            </button>
+          </div>
+          
           <div className="p-4 max-w-4xl mx-auto">
             <div className="mb-2">
               <Label htmlFor="spreadsheetContext" value="Context Notes" />
@@ -62,7 +89,7 @@ const ContextDrawer = ({ contextData, onContextUpdate }) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

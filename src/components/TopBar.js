@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Avatar, Navbar, Dropdown } from 'flowbite-react';
+import { Button, Navbar, Dropdown } from 'flowbite-react';
 import { FaPhone } from 'react-icons/fa';
 import { FaClockRotateLeft } from "react-icons/fa6";
 

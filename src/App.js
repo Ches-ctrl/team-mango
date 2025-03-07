@@ -39,7 +39,7 @@ function App() {
         onPopulate={handlePopulate}
         onShowHistory={handleShowHistory}
       />
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-hidden">
         <Spreadsheet ref={spreadsheetRef} />
       </div>
       <ContextDrawer 

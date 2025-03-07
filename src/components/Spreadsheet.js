@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
 import { Workbook } from "@fortune-sheet/react";
 import "@fortune-sheet/react/dist/index.css";
 
@@ -18,6 +18,38 @@ const Spreadsheet = forwardRef((props, ref) => {
       },
     }
   ]);
+
+  // Add effect to fix styling issues that can't be addressed through options
+  useEffect(() => {
+    // Directly target and fix any elements causing gaps
+    const fixStylingGaps = () => {
+      // Target sheet tabs area which often causes gaps
+      const sheetTabs = document.querySelectorAll('.luckysheet-sheet-area, .luckysheet-sheet-container');
+      sheetTabs.forEach(el => {
+        if (el) {
+          el.style.margin = '0';
+          el.style.padding = '0';
+          el.style.height = 'auto';
+          el.style.minHeight = '0';
+          el.style.maxHeight = '30px'; // Limit the height
+          el.style.border = 'none';
+          el.style.boxSizing = 'border-box';
+        }
+      });
+
+      // Fix any scrollbars
+      const scrollbars = document.querySelectorAll('.luckysheet-scrollbar');
+      scrollbars.forEach(el => {
+        if (el) el.style.display = 'none';
+      });
+    };
+
+    // Run immediately and after a short delay to ensure it applies after render
+    fixStylingGaps();
+    const timer = setTimeout(fixStylingGaps, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
@@ -65,11 +97,18 @@ const Spreadsheet = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="h-full w-full absolute inset-0">
+    <div className="h-full w-full absolute inset-0 overflow-hidden" style={{ margin: 0, padding: 0 }}>
       <Workbook 
         data={workbookData}
         onChange={handleWorkbookChange}
-        style={{ height: '100%', width: '100%' }}
+        style={{ 
+          height: '100%', 
+          width: '100%', 
+          margin: 0, 
+          padding: 0, 
+          border: 'none',
+          overflow: 'hidden'
+        }}
         options={{
           showToolbar: true,  // Enable built-in toolbar for rich functionality
           showFormulaBar: true, 
@@ -86,6 +125,8 @@ const Spreadsheet = forwardRef((props, ref) => {
           sheetFormulaBar: false, // Disable horizontal scrollbar
           enableAddRow: true, // Enable add row functionality
           enableAddBackTop: false, // Disable back to top button
+          showSheetTabBottomBar: false, // Hide bottom bar to remove gaps
+          sheetTabWidth: 120, // Control sheet tab width
         }}
       />
     </div>

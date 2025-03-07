@@ -155,11 +155,13 @@ code {
 
 /* Make Fortune Sheet fill the space better */
 .fortune-sheet-container {
-  border: none;
+  border: none !important;
   height: 100% !important;
   display: flex;
   flex-direction: column;
   overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .luckysheet-grid-container {
@@ -167,6 +169,8 @@ code {
   flex: 1;
   height: auto !important;
   overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Additional Fortune Sheet tweaks */
@@ -175,13 +179,42 @@ code {
   display: flex;
   flex-direction: column;
   overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .fortune-sheet-container .luckysheet-grid-window {
   flex: 1;
   overflow-x: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
+/* Control the sheet tab area */
+.fortune-sheet-container .luckysheet-sheet-area {
+  position: relative;
+  width: 100% !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-top: 1px solid #e0e0e0;
+}
+
+.fortune-sheet-container .luckysheet-sheet-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.fortune-sheet-container .luckysheet-sheets-add {
+  margin: 0 !important;
+}
+
+.fortune-sheet-container .luckysheet-sheets-list {
+  margin: 0 !important;
+}
+
+/* Hide all scrollbars */
 .fortune-sheet-container .luckysheet-scrollbars-visible {
   display: none !important;
 }
@@ -190,15 +223,25 @@ code {
   display: none !important;
 }
 
+.fortune-sheet-container .luckysheet-vertical-scrollbar {
+  display: none !important;
+}
+
 /* Remove any bottom scrollbars */
 ::-webkit-scrollbar {
   height: 0px !important;
+  width: 0px !important;
 }
 
 /* Context drawer styles */
 .context-drawer-toggle {
   border-radius: 8px 8px 0 0;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
 }
 
 .context-drawer-content {
@@ -233,4 +276,87 @@ code {
   max-width: none !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+}
+
+/* Remove any gaps in the overall container */
+#root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Fix any potential gaps in the spreadsheet */
+.spreadsheet-container,
+.fortune-sheet-container,
+.luckysheet-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Extra specific rules to target and eliminate the bottom gap */
+.fortune-sheet-container .luckysheet-sheet-area,
+.fortune-sheet-container .luckysheet-sheet-content,
+.fortune-sheet-container .luckysheet-sheet-container,
+.fortune-sheet-container .luckysheet-sheets-item,
+.fortune-sheet-container .luckysheet-sheet-container-c {
+  height: auto !important;
+  max-height: 30px !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Target bottom-area elements more specifically */
+.fortune-sheet-container .luckysheet-stat-area {
+  height: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: none !important;
+}
+
+/* Fix for the bottom tab bar */
+.fortune-sheet-container .luckysheet-sheet-area {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  border-top: 1px solid #e0e0e0 !important;
+  z-index: 10 !important;
+}
+
+/* Hide specific elements at the bottom that might be causing gaps */
+.fortune-sheet-container .fortune-sheet-container-c,
+.fortune-sheet-container .fortune-sheet-container-c-active,
+.fortune-sheet-container .fortune-sheet-container-c-time,
+.fortune-sheet-container .luckysheet-row-count-show,
+.fortune-sheet-container .luckysheet-column-count-show {
+  display: none !important;
+}
+
+/* Hide any resize handle elements on the sheet tabs */
+.fortune-sheet-container .luckysheet-sheets-item-border,
+.fortune-sheet-container .luckysheet-sheets-item-resize {
+  display: none !important;
+}
+
+/* Fix the sheet tabs container alignment */
+.fortune-sheet-container .luckysheet-sheet-container-c {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+}
+
+/* Override any bottom margins or paddings globally */
+.fortune-sheet-container * {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 } 
