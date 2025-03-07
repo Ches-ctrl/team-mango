@@ -1,9 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Spreadsheet from './components/Spreadsheet';
 import TopBar from './components/TopBar';
+import ContextDrawer from './components/ContextDrawer';
 
 function App() {
   const spreadsheetRef = useRef();
+  const [contextText, setContextText] = useState("This spreadsheet contains contact information for various professionals.");
 
   const handlePopulate = () => {
     if (spreadsheetRef.current) {
@@ -21,17 +23,29 @@ function App() {
     }
   };
 
+  const handleContextUpdate = (newContext) => {
+    setContextText(newContext);
+    // In a real app, you would also save this to a database or API
+    console.log("Context updated:", newContext);
+  };
+
   const handleShowHistory = () => {
     alert("History functionality would show previous versions or changes");
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-white">
+    <div className="flex flex-col h-screen w-full bg-white overflow-hidden">
       <TopBar 
         onPopulate={handlePopulate}
         onShowHistory={handleShowHistory}
       />
-      <Spreadsheet ref={spreadsheetRef} />
+      <div className="flex-1 relative">
+        <Spreadsheet ref={spreadsheetRef} />
+      </div>
+      <ContextDrawer 
+        contextData={contextText} 
+        onContextUpdate={handleContextUpdate} 
+      />
     </div>
   );
 }

@@ -157,10 +157,66 @@ code {
 .fortune-sheet-container {
   border: none;
   height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden !important;
 }
 
 .luckysheet-grid-container {
   width: 100% !important;
+  flex: 1;
+  height: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Additional Fortune Sheet tweaks */
+.fortune-sheet-container .luckysheet-work-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden !important;
+}
+
+.fortune-sheet-container .luckysheet-grid-window {
+  flex: 1;
+  overflow-x: hidden !important;
+}
+
+.fortune-sheet-container .luckysheet-scrollbars-visible {
+  display: none !important;
+}
+
+.fortune-sheet-container .luckysheet-horizontal-scrollbar {
+  display: none !important;
+}
+
+/* Remove any bottom scrollbars */
+::-webkit-scrollbar {
+  height: 0px !important;
+}
+
+/* Context drawer styles */
+.context-drawer-toggle {
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.context-drawer-content {
+  animation: slideUp 0.3s ease-out;
+  max-height: 40vh;
+  width: 100%;
+  border-top: 1px solid #e5e7eb;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Add to your existing CSS */

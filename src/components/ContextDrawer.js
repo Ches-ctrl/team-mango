@@ -1,0 +1,69 @@
+import React, { useState, useEffect } from 'react';
+import { Textarea, Label } from 'flowbite-react';
+import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
+
+const ContextDrawer = ({ contextData, onContextUpdate }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [contextText, setContextText] = useState(
+    typeof contextData === 'string' 
+      ? contextData 
+      : contextData.summary || 'Add spreadsheet context here...'
+  );
+
+  // Update local state when contextData prop changes
+  useEffect(() => {
+    if (typeof contextData === 'string') {
+      setContextText(contextData);
+    }
+  }, [contextData]);
+
+  const toggleDrawer = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleContextChange = (e) => {
+    const newValue = e.target.value;
+    setContextText(newValue);
+    // Auto-save the changes
+    if (onContextUpdate) {
+      onContextUpdate(newValue);
+    }
+  };
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50">
+      {/* Toggle button with label */}
+      <div className="flex justify-center items-center bg-white border-t border-x border-gray-200 rounded-t-lg shadow-md mx-auto w-64 context-drawer-toggle">
+        <button 
+          onClick={toggleDrawer}
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none w-full justify-center"
+          aria-label={isOpen ? "Close context drawer" : "Open context drawer"}
+        >
+          <span className="text-sm font-medium">Spreadsheet Context</span>
+          {isOpen ? <FaChevronDown className="text-emerald-600" /> : <FaChevronUp className="text-emerald-600" />}
+        </button>
+      </div>
+      
+      {/* Drawer content */}
+      {isOpen && (
+        <div className="bg-white shadow-lg transition-all duration-300 ease-in-out context-drawer-content">
+          <div className="p-4 max-w-4xl mx-auto">
+            <div className="mb-2">
+              <Label htmlFor="spreadsheetContext" value="Context Notes" />
+            </div>
+            <Textarea
+              id="spreadsheetContext"
+              placeholder="Add notes, context, or any relevant information about this spreadsheet..."
+              value={contextText}
+              onChange={handleContextChange}
+              rows={4}
+              className="w-full focus:border-emerald-500 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ContextDrawer; 

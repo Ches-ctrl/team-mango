@@ -65,7 +65,7 @@ const Spreadsheet = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col">
+    <div className="h-full w-full absolute inset-0">
       <Workbook 
         data={workbookData}
         onChange={handleWorkbookChange}
@@ -83,6 +83,9 @@ const Spreadsheet = forwardRef((props, ref) => {
           allowCopy: true,
           allowDelete: true,
           showinfobar: false,  // Hide infobar
+          sheetFormulaBar: false, // Disable horizontal scrollbar
+          enableAddRow: true, // Enable add row functionality
+          enableAddBackTop: false, // Disable back to top button
         }}
       />
     </div>
