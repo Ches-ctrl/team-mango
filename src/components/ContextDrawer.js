@@ -74,18 +74,21 @@ const ContextDrawer = ({ contextData, onContextUpdate }) => {
             </button>
           </div>
           
-          <div className="p-4 max-w-4xl mx-auto">
-            <div className="mb-2">
-              <Label htmlFor="spreadsheetContext" value="Context Notes" />
+          <div className="px-6 py-5 max-w-4xl mx-auto">
+            <div className="mb-3">
+              <Label htmlFor="spreadsheetContext" value="Context Notes" className="text-base" />
             </div>
-            <Textarea
-              id="spreadsheetContext"
-              placeholder="Add notes, context, or any relevant information about this spreadsheet..."
-              value={contextText}
-              onChange={handleContextChange}
-              rows={4}
-              className="w-full focus:border-emerald-500 focus:ring-emerald-500"
-            />
+            <div className="py-2">
+              <Textarea
+                id="spreadsheetContext"
+                placeholder="Add notes, context, or any relevant information about this spreadsheet..."
+                value={contextText}
+                onChange={handleContextChange}
+                rows={4}
+                className="w-full focus:border-emerald-500 focus:ring-emerald-500 text-base"
+                style={{ padding: '12px' }}
+              />
+            </div>
           </div>
         </div>
       )}
