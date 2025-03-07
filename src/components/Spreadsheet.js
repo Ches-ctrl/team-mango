@@ -11,9 +11,11 @@ const Spreadsheet = forwardRef((props, ref) => {
       id: "sheet1", // Fortune Sheet requires unique IDs
       order: 0,
       status: 1, // 1 means visible
-      row: 30, // Default row count
-      column: 10, // Default column count
-      config: {},
+      row: 100,  // More rows for a fuller sheet
+      column: 26, // A to Z columns
+      config: {
+        rowHeight: 32,
+      },
     }
   ]);
 
@@ -69,14 +71,18 @@ const Spreadsheet = forwardRef((props, ref) => {
         onChange={handleWorkbookChange}
         style={{ height: '100%', width: '100%' }}
         options={{
-          showToolbar: false, // Hide the default toolbar since we're using our custom one
-          showFormulaBar: false, // Hide formula bar
-          showSheetTabs: false, // Hide sheet tabs since we're handling sheets in our left menu
-          row: 30,
-          column: 10,
-          columnHeaderHeight: 40, // Taller headers for better visibility
-          rowHeaderWidth: 46, // Wider row headers
-          cellContextMenu: true, // Enable right-click menu
+          showToolbar: true,  // Enable built-in toolbar for rich functionality
+          showFormulaBar: true, 
+          showSheetTabs: true,
+          row: 100,
+          column: 26,
+          columnHeaderHeight: 40,
+          rowHeaderWidth: 46,
+          cellContextMenu: true,
+          allowEdit: true,
+          allowCopy: true,
+          allowDelete: true,
+          showinfobar: false,  // Hide infobar
         }}
       />
     </div>

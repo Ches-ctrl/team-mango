@@ -1,41 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import Spreadsheet from './components/Spreadsheet';
 import TopBar from './components/TopBar';
-import LeftMenu from './components/LeftMenu';
 
 function App() {
-  const [menuExpanded, setMenuExpanded] = useState(true);
-  const [spreadsheets, setSpreadsheets] = useState([
-    { id: 1, name: "Sheet 1 - " + new Date().toLocaleDateString() }
-  ]);
-  const [currentSpreadsheetId, setCurrentSpreadsheetId] = useState(1);
   const spreadsheetRef = useRef();
-
-  const toggleMenu = () => {
-    setMenuExpanded(!menuExpanded);
-  };
-
-  const createNewSpreadsheet = () => {
-    const newId = spreadsheets.length + 1;
-    const newSheet = {
-      id: newId,
-      name: `Sheet ${newId} - ${new Date().toLocaleDateString()}`
-    };
-    setSpreadsheets([...spreadsheets, newSheet]);
-    setCurrentSpreadsheetId(newId);
-  };
-
-  const handleAddRow = () => {
-    if (spreadsheetRef.current) {
-      spreadsheetRef.current.addRow();
-    }
-  };
-
-  const handleSetHeader = () => {
-    if (spreadsheetRef.current) {
-      spreadsheetRef.current.setAsHeader(0);
-    }
-  };
 
   const handlePopulate = () => {
     if (spreadsheetRef.current) {
@@ -53,24 +21,17 @@ function App() {
     }
   };
 
+  const handleShowHistory = () => {
+    alert("History functionality would show previous versions or changes");
+  };
+
   return (
-    <div className="flex h-screen bg-white">
-      <LeftMenu 
-        expanded={menuExpanded} 
-        toggleMenu={toggleMenu}
-        spreadsheets={spreadsheets}
-        currentId={currentSpreadsheetId}
-        setCurrentSpreadsheet={setCurrentSpreadsheetId}
-        createNewSpreadsheet={createNewSpreadsheet}
+    <div className="flex flex-col h-screen w-full bg-white">
+      <TopBar 
+        onPopulate={handlePopulate}
+        onShowHistory={handleShowHistory}
       />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <TopBar 
-          onAddRow={handleAddRow}
-          onSetHeader={handleSetHeader}
-          onPopulate={handlePopulate}
-        />
-        <Spreadsheet ref={spreadsheetRef} />
-      </div>
+      <Spreadsheet ref={spreadsheetRef} />
     </div>
   );
 }

@@ -142,4 +142,39 @@ code {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Green theme customization */
+.bg-primary {
+  background-color: #15803d !important;
+}
+
+.hover\:bg-primary:hover {
+  background-color: #166534 !important;
+}
+
+/* Make Fortune Sheet fill the space better */
+.fortune-sheet-container {
+  border: none;
+  height: 100% !important;
+}
+
+.luckysheet-grid-container {
+  width: 100% !important;
+}
+
+/* Add to your existing CSS */
+.navbar-fluid {
+  width: 100% !important;
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Override Flowbite container styles */
+.flowbite-navbar > div {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 } 

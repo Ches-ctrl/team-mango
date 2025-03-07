@@ -1,23 +1,22 @@
 import React from 'react';
-import { Button, Navbar } from 'flowbite-react';
-import { FaPhone, FaPlus } from 'react-icons/fa';
-import { MdTableRows } from 'react-icons/md';
+import { Button } from 'flowbite-react';
+import { FaPhone } from 'react-icons/fa';
+import { FaClockRotateLeft } from "react-icons/fa6";
 
-const TopBar = ({ onAddRow, onSetHeader, onPopulate }) => {
+const TopBar = ({ onPopulate, onShowHistory }) => {
   return (
-    <Navbar className="bg-white border-b border-gray-200 px-4 py-2.5 shadow-sm">
-      <div className="flex items-center justify-between w-full">
-        <Navbar.Brand href="/">
+    <div className="w-full bg-white border-b border-gray-200 shadow-sm">
+      <div className="w-full flex items-center justify-between px-4 py-2.5">
+        <div className="flex-shrink-0">
           <span className="self-center text-xl font-semibold text-gray-800">
-            Spreadsheet App
+            AI Spreadsheet
           </span>
-        </Navbar.Brand>
+        </div>
         
         <div className="flex gap-3">
           <Button 
-            color="success" 
+            className="font-medium flex items-center bg-emerald-700 hover:bg-emerald-800"
             onClick={onPopulate}
-            className="font-medium flex items-center"
           >
             <span className="icon">
               <FaPhone className="h-5 w-5" />
@@ -27,28 +26,17 @@ const TopBar = ({ onAddRow, onSetHeader, onPopulate }) => {
           
           <Button 
             color="light" 
-            onClick={onAddRow}
+            onClick={onShowHistory}
             className="font-medium flex items-center"
           >
             <span className="icon">
-              <FaPlus className="h-5 w-5" />
+              <FaClockRotateLeft className="h-5 w-5" />
             </span>
-            <span className="ml-2">Add Row</span>
-          </Button>
-          
-          <Button 
-            color="light" 
-            onClick={onSetHeader}
-            className="font-medium flex items-center"
-          >
-            <span className="icon">
-              <MdTableRows className="h-5 w-5" />
-            </span>
-            <span className="ml-2">Set as Header</span>
+            <span className="ml-2">History</span>
           </Button>
         </div>
       </div>
-    </Navbar>
+    </div>
   );
 };
 
