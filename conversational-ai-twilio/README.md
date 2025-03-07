@@ -50,11 +50,13 @@ https://ab81-5-148-87-204.ngrok-free.app/twilio/inbound_call
 ### Outbound Call
 
 1. Start the server: `node outbound.js`
-1. `ngrok http --url=<your-static-url> 8000`
-1. Make a request to the `/outbound-call` endpoint with the prompt you want to use:
+2. `ngrok http --url=<your-static-url> 8000`
+3. Make a request to the `/outbound-call` endpoint with the prompt you want to use:
+
+Can make multiple calls simulatenously - e.g.
 
 ```bash
-curl -X POST https://02f4-5-148-87-204.ngrok-free.app/outbound-call \
+curl -X POST https://e979-158-41-64-74.ngrok-free.app/outbound-call \
 -H "Content-Type: application/json" \
 -d '{
    "prompt": "You are Eric, an outbound car sales agent. You are calling to sell a new car to the customer. Be friendly and professional and answer all questions.",
@@ -63,7 +65,17 @@ curl -X POST https://02f4-5-148-87-204.ngrok-free.app/outbound-call \
    }'
 ```
 
-https://02f4-5-148-87-204.ngrok-free.app/outbound-call
+```bash
+curl -X POST https://e979-158-41-64-74.ngrok-free.app/outbound-call \
+-H "Content-Type: application/json" \
+-d '{
+   "prompt": "You are Eric, an outbound car sales agent. You are calling to sell a new car to the customer. Be friendly and professional and answer all questions.",
+   "first_message": "Hello Thor, my name is Eric, I heard you were looking for a new car! What model and color are you looking for?",
+   "number": "+447412110675"
+   }'
+```
+
+https://e979-158-41-64-74.ngrok-free.app/outbound-call
 
 ## Troubleshooting
 
