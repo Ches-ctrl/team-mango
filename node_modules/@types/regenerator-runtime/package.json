@@ -1,0 +1,26 @@
+{
+    "name": "@types/regenerator-runtime",
+    "version": "0.13.8",
+    "description": "TypeScript definitions for regenerator-runtime",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/regenerator-runtime",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "ExE Boss",
+            "githubUsername": "ExE-Boss",
+            "url": "https://github.com/ExE-Boss"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/regenerator-runtime"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "peerDependencies": {},
+    "typesPublisherContentHash": "84601c72eb07073cd90a3b20c36b3ddfe5087571c0698d40ec36a6f3598217ca",
+    "typeScriptVersion": "4.8"
+}

@@ -1,0 +1,43 @@
+{
+  "author": "Formulajs",
+  "name": "@formulajs/formulajs",
+  "description": "JavaScript implementation of most Microsoft Excel formula functions",
+  "version": "2.9.3",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:formulajs/formulajs.git"
+  },
+  "main": "index.js",
+  "bin": {
+    "implementation-stats": "./bin/implementation-stats"
+  },
+  "scripts": {
+    "test": "make test",
+    "test-browser": "make test-browser",
+    "lint": "make lint",
+    "watch": "make watch",
+    "build": "make build",
+    "coverage": "make coverage"
+  },
+  "dependencies": {
+    "bessel": "^1.0.2",
+    "jstat": "^1.9.2"
+  },
+  "devDependencies": {
+    "blanket": "^1.1.6",
+    "browserify": "^13.0.1",
+    "cli-table": "^0.3.0",
+    "http-server": "^0.12.1",
+    "jshint": "^2.11.0",
+    "mocha": "^7.1.1",
+    "should": "^11.1.0",
+    "webpack": "^3.5.5"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "lib",
+      "data-cover-never": "node_modules"
+    }
+  },
+  "license": "MIT"
+}
