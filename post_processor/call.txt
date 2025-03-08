@@ -11,19 +11,13 @@ curl -X 'POST' \
 
 # Example: Analyze the most recent call
 curl -X 'POST' \
-  'https://e979-158-41-64-74.ngrok-free.app/bland/calls/analyze' \
+  'https://api.bland.ai/v1/calls/949de306-c862-4081-92f7-12dc363dd19b/analyze' \
   -H 'Content-Type: application/json' \
+  -H 'authorization: org_b54c7f78c14d997afe455f85f8d8170d2203237a51011baa75612c2d6cb6429b7e7fe302c5d5da760e5f69' \
   -d '{
-  "task": {
-    "goal": "You are a friendly assistant. You are evaluating participant satisfaction with the Sequel x Inaugural hackathon experience.",
-    "questions": [
-      ["On a scale of 1-10, how would the participant rate their overall hackathon experience?"],
-      ["What aspects of the hackathon did the participant enjoy the most?"]
-    ]
-  }
+  "goal": "You are a friendly assistant. You are evaluating participant satisfaction with the Sequel x Inaugural hackathon experience.",
+  "questions": [
+    ["On a scale of 1-10, how would the participant rate their overall hackathon experience?", "number"],
+    ["What aspects of the hackathon did the participant enjoy the most?", "string"]
+  ]
 }'
-
-["Were there any challenges or issues the participant faced during the hackathon?"],
-["Would the participant recommend this hackathon to others?", "boolean"],
-["Did the participant find the hackathon well-organized?", "boolean"],
-["What suggestions does the participant have for improving future hackathons?"]
