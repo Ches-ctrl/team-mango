@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Textarea, Label } from 'flowbite-react';
+import { Textarea, Label, Spinner } from 'flowbite-react';
 import { FaChevronUp, FaChevronDown } from 'react-icons/fa';
 
-const ContextDrawer = ({ contextData, onContextUpdate }) => {
+const ContextDrawer = ({ contextData, onContextUpdate, isLoading }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [contextText, setContextText] = useState(
     typeof contextData === 'string' 
@@ -22,77 +22,61 @@ const ContextDrawer = ({ contextData, onContextUpdate }) => {
   };
 
   const handleContextChange = (e) => {
-    const newValue = e.target.value;
-    setContextText(newValue);
-    // Auto-save the changes
-    if (onContextUpdate) {
-      onContextUpdate(newValue);
+    setContextText(e.target.value);
+  };
+
+  const handleSave = () => {
+    if (onContextUpdate && typeof onContextUpdate === 'function') {
+      onContextUpdate(contextText);
     }
   };
 
   return (
-    <>
-      {/* Toggle button when drawer is closed */}
-      {!isOpen && (
-        <div 
-          className="context-drawer-toggle bg-white border-t border-x border-gray-200 rounded-t-lg shadow-md w-64"
-          style={{ 
-            zIndex: 999, 
-            position: 'absolute',
-            bottom: 0,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            marginBottom: 0
-          }}
-        >
-          <button 
-            onClick={toggleDrawer}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 focus:outline-none w-full justify-center"
-            aria-label="Open context drawer"
-          >
-            <span className="text-sm font-medium">Spreadsheet Context</span>
-            <FaChevronUp className="text-emerald-600" />
-          </button>
-        </div>
-      )}
+    <div className="border-t border-gray-200 bg-white">
+      {/* Drawer toggle button */}
+      <div 
+        className="flex justify-center items-center py-2 cursor-pointer hover:bg-gray-100"
+        onClick={toggleDrawer}
+      >
+        <span className="mr-2 text-sm font-medium text-gray-700">
+          {isOpen ? 'Hide Context' : 'Show Context'}
+        </span>
+        {isOpen ? <FaChevronDown /> : <FaChevronUp />}
+      </div>
       
-      {/* Drawer content with toggle button at top when open */}
+      {/* Drawer content */}
       {isOpen && (
-        <div 
-          className="fixed bottom-0 left-0 right-0 bg-white shadow-lg context-drawer-content"
-          style={{ zIndex: 1000 }}
-        >
-          {/* Toggle button at top of drawer */}
-          <div className="border-b border-gray-200 py-2">
-            <button 
-              onClick={toggleDrawer}
-              className="flex items-center gap-2 px-4 py-1 text-gray-600 hover:text-gray-800 focus:outline-none mx-auto"
-              aria-label="Close context drawer"
-            >
-              <span className="text-sm font-medium">Spreadsheet Context</span>
-              <FaChevronDown className="text-emerald-600" />
-            </button>
+        <div className="p-4 transition-all duration-300 ease-in-out">
+          <div className="mb-2">
+            <Label htmlFor="context" value="Spreadsheet Context" />
           </div>
           
-          <div className="px-6 py-5 max-w-4xl mx-auto">
-            <div className="mb-3">
-              <Label htmlFor="spreadsheetContext" value="Context Notes" className="text-base" />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-24">
+              <Spinner size="xl" />
             </div>
-            <div className="py-2">
+          ) : (
+            <>
               <Textarea
-                id="spreadsheetContext"
-                placeholder="Add notes, context, or any relevant information about this spreadsheet..."
+                id="context"
                 value={contextText}
                 onChange={handleContextChange}
-                rows={4}
-                className="w-full focus:border-emerald-500 focus:ring-emerald-500 text-base"
-                style={{ padding: '12px' }}
+                placeholder="Add context about this spreadsheet..."
+                rows={3}
+                className="mb-3"
               />
-            </div>
-          </div>
+              
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={handleSave}
+              >
+                Save Context
+              </button>
+            </>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

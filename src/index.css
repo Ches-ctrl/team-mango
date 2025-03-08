@@ -153,95 +153,54 @@ code {
   background-color: #166534 !important;
 }
 
-/* Make Fortune Sheet fill the space better */
+/* Base Fortune Sheet container */
 .fortune-sheet-container {
   border: none !important;
   height: 100% !important;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden !important;
   margin: 0 !important;
   padding: 0 !important;
 }
 
+/* Basic grid sizing */
 .luckysheet-grid-container {
   width: 100% !important;
-  flex: 1;
-  height: auto !important;
-  overflow-x: hidden !important;
+  height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-/* Additional Fortune Sheet tweaks */
-.fortune-sheet-container .luckysheet-work-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.fortune-sheet-container .luckysheet-grid-window {
-  flex: 1;
-  overflow-x: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-/* Control the sheet tab area */
-.fortune-sheet-container .luckysheet-sheet-area {
-  position: relative;
-  width: 100% !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border-top: 1px solid #e0e0e0;
-}
-
-.fortune-sheet-container .luckysheet-sheet-container {
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-}
-
-.fortune-sheet-container .luckysheet-sheets-add {
-  margin: 0 !important;
-}
-
-.fortune-sheet-container .luckysheet-sheets-list {
-  margin: 0 !important;
+/* Simply hide sheet tabs completely */
+.fortune-sheet-container .luckysheet-sheet-area,
+.fortune-sheet-container .luckysheet-sheet-list,
+.fortune-sheet-container .luckysheet-sheets-add,
+.fortune-sheet-container .luckysheet-sheets-more,
+.fortune-sheet-container .luckysheet-sheet-container,
+.fortune-sheet-container .luckysheet-sheets-item {
+  display: none !important;
+  height: 0 !important;
 }
 
 /* Hide all scrollbars */
-.fortune-sheet-container .luckysheet-scrollbars-visible {
-  display: none !important;
-}
-
-.fortune-sheet-container .luckysheet-horizontal-scrollbar {
-  display: none !important;
-}
-
+.fortune-sheet-container .luckysheet-scrollbars-visible,
+.fortune-sheet-container .luckysheet-horizontal-scrollbar,
 .fortune-sheet-container .luckysheet-vertical-scrollbar {
   display: none !important;
 }
 
-/* Remove any bottom scrollbars */
 ::-webkit-scrollbar {
   height: 0px !important;
   width: 0px !important;
 }
 
-/* Context drawer styles */
+/* Context drawer positioning */
 .context-drawer-toggle {
   border-radius: 8px 8px 0 0;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 60;
+  z-index: 9999;
 }
 
 .context-drawer-content {
@@ -359,4 +318,32 @@ code {
 .fortune-sheet-container * {
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
+}
+
+/* Hide all sheet-related elements */
+.fortune-sheet-container .luckysheet-sheet-area,
+.fortune-sheet-container .luckysheet-sheet-list,
+.fortune-sheet-container .luckysheet-sheets-add,
+.fortune-sheet-container .luckysheet-sheets-more,
+.fortune-sheet-container .luckysheet-sheet-container,
+.fortune-sheet-container .luckysheet-sheets-item {
+  display: none !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+}
+
+/* Remove the bottom sheet area completely */
+.fortune-sheet-container .luckysheet-sheet-area {
+  position: absolute !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 } 

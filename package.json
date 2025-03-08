@@ -11,20 +11,23 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "cd server && npm run dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fortune-sheet/react": "^1.0.2",
+    "axios": "^1.8.2",
     "flowbite": "^3.1.2",
     "flowbite-react": "^0.10.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-scripts": "5.0.1",
-    "react-spreadsheet": "^0.9.5"
+    "react-spreadsheet": "^0.9.5",
+    "socket.io-client": "^4.8.1"
   },
   "eslintConfig": {
     "extends": [
