@@ -38,6 +38,7 @@ function App() {
       <TopBar 
         onPopulate={handlePopulate}
         onShowHistory={handleShowHistory}
+        contextText={contextText}
       />
       <div className="flex-1 relative overflow-hidden">
         <Spreadsheet ref={spreadsheetRef} />
