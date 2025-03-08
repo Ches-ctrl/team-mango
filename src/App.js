@@ -1,18 +1,80 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Spreadsheet from './components/Spreadsheet';
 import TopBar from './components/TopBar';
 import ContextDrawer from './components/ContextDrawer';
-import { getSheet, getSheetHistory, updateSheet } from './services/sheetService';
+import { getSheet, getSheetHistory, updateSheet, createSheet } from './services/sheetService';
 
 function App() {
   const spreadsheetRef = useRef();
   const [contextText, setContextText] = useState("This spreadsheet contains contact information for various professionals.");
-  const [sheetId, setSheetId] = useState("default-sheet");
-  const [isLoading, setIsLoading] = useState(false);
+  const [sheetId, setSheetId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Extract or create sheet ID from URL on initial load
+  useEffect(() => {
+    const initializeSheet = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Check URL for sheet ID
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentSheetId = urlParams.get('id');
+        
+        // If no sheet ID in URL, create a new one but don't save to DB yet
+        if (!currentSheetId) {
+          currentSheetId = uuidv4();
+          
+          // Don't create a sheet in the database immediately
+          // Wait until there's actual content before saving
+          console.log("Generated new sheet ID:", currentSheetId);
+          
+          // Update URL without refreshing page
+          const newUrl = `${window.location.pathname}?id=${currentSheetId}`;
+          window.history.pushState({ path: newUrl }, '', newUrl);
+        } else {
+          // Only try to fetch existing sheet data if ID is provided in URL
+          try {
+            const sheetData = await getSheet(currentSheetId);
+            console.log("Loaded existing sheet:", currentSheetId);
+          } catch (err) {
+            if (err.response && err.response.status === 404) {
+              console.log("Sheet ID in URL does not exist in database yet:", currentSheetId);
+            } else {
+              console.error("Error loading sheet:", err);
+            }
+          }
+        }
+        
+        // Set the sheet ID state
+        setSheetId(currentSheetId);
+        
+        // If spreadsheet ref is ready, set its sheet ID too
+        if (spreadsheetRef.current) {
+          spreadsheetRef.current.setSheetId(currentSheetId);
+        }
+      } catch (error) {
+        console.error("Error initializing sheet:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    initializeSheet();
+  }, []);
+
+  // Sync spreadsheet ref with sheet ID when it becomes available
+  useEffect(() => {
+    if (spreadsheetRef.current && sheetId) {
+      spreadsheetRef.current.setSheetId(sheetId);
+    }
+  }, [spreadsheetRef, sheetId]);
 
   // Load context text from the backend when sheet ID changes
   useEffect(() => {
     const loadContextData = async () => {
+      if (!sheetId) return;
+      
       try {
         setIsLoading(true);
         const data = await getSheet(sheetId);
@@ -112,10 +174,9 @@ function App() {
       setContextText(newContext);
       
       // Update context in the backend
-      if (spreadsheetRef.current) {
-        const currentSheetId = spreadsheetRef.current.getSheetId();
+      if (spreadsheetRef.current && sheetId) {
         const currentData = spreadsheetRef.current.getAllSheets();
-        await updateSheet(currentSheetId, currentData, newContext);
+        await updateSheet(sheetId, currentData, newContext);
       }
     } catch (error) {
       console.error("Error updating context:", error);
@@ -124,9 +185,8 @@ function App() {
 
   const handleShowHistory = async () => {
     try {
-      if (spreadsheetRef.current) {
-        const currentSheetId = spreadsheetRef.current.getSheetId();
-        const history = await getSheetHistory(currentSheetId);
+      if (sheetId) {
+        const history = await getSheetHistory(sheetId);
         console.log("Sheet history:", history);
         
         // Display history in a more user-friendly way
@@ -146,16 +206,43 @@ function App() {
     }
   };
 
+  // Function to create a new sheet
+  const handleNewSheet = async () => {
+    // Generate a new UUID
+    const newSheetId = uuidv4();
+    
+    // We don't need to create the sheet in the database immediately
+    // It will be created when the user adds content
+    
+    // Update URL
+    const newUrl = `${window.location.pathname}?id=${newSheetId}`;
+    window.history.pushState({ path: newUrl }, '', newUrl);
+    
+    // Update state
+    setSheetId(newSheetId);
+    setContextText("New spreadsheet");
+    
+    // Reset spreadsheet display
+    if (spreadsheetRef.current) {
+      spreadsheetRef.current.setSheetId(newSheetId);
+    }
+    
+    console.log("New sheet ID created:", newSheetId);
+  };
+
   return (
     <div className="h-screen w-full flex flex-col bg-white">
       <TopBar 
         onPopulate={handlePopulate}
         onShowHistory={handleShowHistory}
+        onNewSheet={handleNewSheet}
+        currentSheetId={sheetId}
       />
       <div className="flex-grow relative">
         <Spreadsheet 
           ref={spreadsheetRef} 
           contextText={contextText}
+          initialSheetId={sheetId}
         />
       </div>
       <ContextDrawer 

@@ -1,9 +1,22 @@
 import React from 'react';
-import { Button, Navbar, Dropdown } from 'flowbite-react';
-import { FaPhone } from 'react-icons/fa';
+import { Button, Navbar, Dropdown, Tooltip } from 'flowbite-react';
+import { FaPhone, FaPlus, FaCopy } from 'react-icons/fa';
 import { FaClockRotateLeft } from "react-icons/fa6";
 
-const TopBar = ({ onPopulate, onShowHistory }) => {
+const TopBar = ({ onPopulate, onShowHistory, onNewSheet, currentSheetId }) => {
+  // Function to copy sheet ID to clipboard (kept for functionality but hidden from UI)
+  const copySheetIdToClipboard = () => {
+    if (currentSheetId) {
+      navigator.clipboard.writeText(currentSheetId)
+        .then(() => {
+          alert('Sheet ID copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+    }
+  };
+
   return (
     <Navbar className="bg-white border-b border-gray-200 shadow-sm py-2.5 px-4" fluid>
       <div className="flex items-center justify-between w-full">
@@ -18,7 +31,20 @@ const TopBar = ({ onPopulate, onShowHistory }) => {
           </span>
         </Navbar.Brand>
         
+        {/* Sheet ID display removed from here */}
+        
         <div className="flex items-center gap-3">
+          <Button 
+            onClick={onNewSheet}
+            color="light"
+            className="flex items-center justify-center"
+          >
+            <div className="flex items-center">
+              <FaPlus className="w-4 h-4 mr-2" />
+              <span>New Sheet</span>
+            </div>
+          </Button>
+          
           <Button 
             onClick={onPopulate}
             color="success"

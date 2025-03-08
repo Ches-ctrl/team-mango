@@ -20,12 +20,21 @@ const Spreadsheet = forwardRef((props, ref) => {
     }
   ]);
   
-  const [sheetId, setSheetId] = useState("default-sheet");
+  const [sheetId, setSheetId] = useState(props.initialSheetId || null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load data from backend when component mounts
+  // Update sheet ID when initialSheetId prop changes
+  useEffect(() => {
+    if (props.initialSheetId && props.initialSheetId !== sheetId) {
+      setSheetId(props.initialSheetId);
+    }
+  }, [props.initialSheetId]);
+
+  // Load data from backend when sheet ID changes
   useEffect(() => {
     const loadSheetData = async () => {
+      if (!sheetId) return;
+      
       try {
         setIsLoading(true);
         const data = await getSheet(sheetId);
@@ -60,7 +69,9 @@ const Spreadsheet = forwardRef((props, ref) => {
     };
 
     // Setup socket connection
-    initSocket(sheetId, handleSheetUpdate);
+    if (sheetId) {
+      initSocket(sheetId, handleSheetUpdate);
+    }
     
     // Clean up socket on unmount
     return () => {
@@ -72,41 +83,130 @@ const Spreadsheet = forwardRef((props, ref) => {
   useEffect(() => {
     // Directly target and fix any elements causing gaps
     const fixStylingGaps = () => {
-      // Hide the sheet tabs area completely
-      const sheetTabs = document.querySelectorAll('.luckysheet-sheet-area, .luckysheet-sheet-container');
-      sheetTabs.forEach(el => {
-        if (el) {
-          el.style.display = 'none';
-        }
+      // Hide the sheet tabs area completely - more comprehensive selectors
+      const sheetTabSelectors = [
+        '.luckysheet-sheet-area', 
+        '.luckysheet-sheet-container',
+        '.luckysheet-sheet-list',
+        '.luckysheet-sheet-content',
+        '.luckysheet-sheets-add',
+        '.luckysheet-sheets-item',
+        '.sheet-bar',
+        '.luckysheet-sta-c',
+        '[class*="luckysheet-sheets"]' // Target any element with class containing "luckysheet-sheets"
+      ];
+      
+      sheetTabSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          if (el) {
+            el.style.display = 'none';
+          }
+        });
       });
+
+      // Specifically target the bottom bar area
+      const bottomBar = document.querySelector('.luckysheet-sta-c');
+      if (bottomBar) {
+        bottomBar.style.display = 'none';
+        bottomBar.style.height = '0';
+        bottomBar.style.opacity = '0';
+        bottomBar.style.visibility = 'hidden';
+      }
 
       // Fix any scrollbars
       const scrollbars = document.querySelectorAll('.luckysheet-scrollbar');
       scrollbars.forEach(el => {
         if (el) el.style.display = 'none';
       });
+      
+      // Add CSS to hide sheet tabs via stylesheet
+      const style = document.createElement('style');
+      style.textContent = `
+        .luckysheet-sheet-area, 
+        .luckysheet-sheet-container,
+        .luckysheet-sheet-list,
+        .luckysheet-sheet-content,
+        .luckysheet-sheets-add,
+        .luckysheet-sheets-item,
+        .sheet-bar,
+        .luckysheet-sta-c,
+        [class*="luckysheet-sheets"] {
+          display: none !important;
+          height: 0 !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+      `;
+      document.head.appendChild(style);
     };
 
-    // Run immediately and after a short delay to ensure it applies after render
+    // Run immediately and multiple times with increasing delays to catch any late renders
     fixStylingGaps();
-    const timer = setTimeout(fixStylingGaps, 100);
+    const timers = [
+      setTimeout(fixStylingGaps, 100),
+      setTimeout(fixStylingGaps, 500),
+      setTimeout(fixStylingGaps, 1000),
+      setTimeout(fixStylingGaps, 2000)
+    ];
     
-    return () => clearTimeout(timer);
+    // Create a mutation observer to watch for any new sheet tabs being added
+    const observer = new MutationObserver((mutations) => {
+      fixStylingGaps();
+    });
+    
+    // Start observing the document body for DOM changes
+    observer.observe(document.body, { 
+      childList: true,
+      subtree: true
+    });
+    
+    return () => {
+      timers.forEach(clearTimeout);
+      observer.disconnect();
+    };
   }, []);
 
   // Save workbook data to backend when it changes
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && sheetId) {
       const saveData = async () => {
         try {
-          // Update via Socket.io for real-time collaboration
-          emitSheetUpdate(sheetId, workbookData, props.contextText || "");
+          // Check if the sheet is empty before saving
+          const isEmpty = isSheetEmpty(workbookData);
           
-          // Also update via REST API for persistence
-          await updateSheet(sheetId, workbookData, props.contextText || "");
+          if (!isEmpty) {
+            // Only save non-empty sheets
+            // Update via Socket.io for real-time collaboration
+            emitSheetUpdate(sheetId, workbookData, props.contextText || "");
+            
+            // Also update via REST API for persistence
+            await updateSheet(sheetId, workbookData, props.contextText || "");
+          } else {
+            console.log('Sheet is empty, skipping save to database');
+          }
         } catch (error) {
           console.error("Error saving sheet data:", error);
         }
+      };
+      
+      // Helper function to check if a sheet is empty
+      const isSheetEmpty = (data) => {
+        if (!data || !Array.isArray(data) || data.length === 0) return true;
+        
+        const sheet = data[0];
+        if (!sheet || !sheet.celldata || !Array.isArray(sheet.celldata)) return true;
+        
+        // Check if there are any non-empty cells
+        return sheet.celldata.length === 0 || 
+          !sheet.celldata.some(cell => 
+            cell && cell.v && 
+            (typeof cell.v === 'object' ? 
+              (cell.v.v !== null && cell.v.v !== undefined && cell.v.v !== '') : 
+              (cell.v !== null && cell.v !== undefined && cell.v !== '')
+            )
+          );
       };
       
       // Debounce saves to avoid excessive API calls
@@ -197,7 +297,9 @@ const Spreadsheet = forwardRef((props, ref) => {
     
     // Method to set the sheet ID
     setSheetId: (id) => {
-      setSheetId(id);
+      if (id !== sheetId) {
+        setSheetId(id);
+      }
     },
     
     // Get current sheet ID
@@ -244,6 +346,32 @@ const Spreadsheet = forwardRef((props, ref) => {
             enableAddRow: true,
             enableAddBackTop: false,
             showSheetTabBottomBar: false,
+            enableAddSheet: false, // Disable the ability to add new sheets
+            showSheetTabConfig: false, // Disable sheet tab configuration
+            container: 'luckysheet', // Container ID
+            hook: {
+              afterRender: () => {
+                // Run the fixStylingGaps function after render
+                const sheetTabSelectors = [
+                  '.luckysheet-sheet-area', 
+                  '.luckysheet-sheet-container',
+                  '.luckysheet-sheet-list',
+                  '.luckysheet-sheet-content',
+                  '.luckysheet-sheets-add',
+                  '.luckysheet-sheets-item',
+                  '.sheet-bar',
+                  '.luckysheet-sta-c'
+                ];
+                
+                sheetTabSelectors.forEach(selector => {
+                  document.querySelectorAll(selector).forEach(el => {
+                    if (el) {
+                      el.style.display = 'none';
+                    }
+                  });
+                });
+              }
+            }
           }}
         />
       )}
