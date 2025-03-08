@@ -102,5 +102,36 @@ class HackathonDBManager:
             entries.append(self._process_document(entry))
         return entries
 
+    async def create_transcript_result(self, data):
+        """Create a new transcript processing result"""
+        # Add timestamp if not present
+        if "created_at" not in data:
+            data["created_at"] = datetime.datetime.utcnow()
+            
+        result = await self.db.transcript_results.insert_one(data)
+        return {
+            "success": True,
+            "id": str(result.inserted_id),
+            "message": "Transcript result created successfully"
+        }
+    
+    async def get_transcript_result(self, result_id):
+        """Get a transcript result by ID"""
+        try:
+            result_id_obj = ObjectId(result_id)
+        except:
+            return None
+            
+        result = await self.db.transcript_results.find_one({"_id": result_id_obj})
+        return result
+    
+    async def get_transcript_results_by_query(self, query=None, limit=100, skip=0):
+        """Get transcript results with optional filtering"""
+        if query is None:
+            query = {}
+            
+        cursor = self.db.transcript_results.find(query).sort("created_at", -1).skip(skip).limit(limit)
+        results = await cursor.to_list(length=limit)
+        return results
 # Create a single instance to be imported
 db_manager = HackathonDBManager()
