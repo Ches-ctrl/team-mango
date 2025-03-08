@@ -81,9 +81,39 @@ Returns all hackathon entries
 ### Bland AI Endpoints
 
 #### Send a Phone Call
+
+Localhost:
+```
+curl -X 'POST' \                                                                                                                    [🐍 lewagon]
+  'http://localhost:8000/bland/calls' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "phone_number": "+447874943523",
+  "task": "You are a friendly assistant calling to introduce yourself. Be polite and ask how their day is going. Keep the conversation brief and friendly.",
+  "voice": "Josh",
+  "wait_for_greeting": true
+}'
+```
+
+ngrok: https://e979-158-41-64-74.ngrok-free.app
+
+Exposed:
+```
+curl -X 'POST' \
+  'https://e979-158-41-64-74.ngrok-free.app/bland/calls' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "phone_number": "+447874943523",
+  "task": "You are a friendly assistant calling to introduce yourself. Be polite and ask how their day is going. Keep the conversation brief and friendly.",
+  "voice": "Josh",
+  "wait_for_greeting": true
+}'
+```
+
 ```
 POST /bland/calls
 ```
+
 Request body example:
 ```json
 {
