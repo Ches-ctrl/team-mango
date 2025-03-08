@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "message": "Successfully analyzed call",
+  "answers": [
+    7,
+    "Working with the team"
+  ],
+  "questions": [
+    [
+      "On a scale of 1-10, how would the participant rate their overall hackathon experience?",
+      "number"
+    ],
+    [
+      "What aspects of the hackathon did the participant enjoy the most?",
+      "string"
+    ]
+  ],
+  "credits_used": 0.000012425
+}
