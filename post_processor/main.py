@@ -1,10 +1,11 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Dict, List, Any
-from mongo_db import db_manager  
+from mongo_db import db_manager
 import uvicorn
 from bson import ObjectId
 import json
+from blandai import router as bland_router
 
 # Custom JSON encoder for MongoDB ObjectId
 class MongoJSONEncoder(json.JSONEncoder):
@@ -29,6 +30,9 @@ class CustomJSONResponse(JSONResponse):
 
 # Initialize FastAPI app
 app = FastAPI(title="Hackathon API")
+
+# Include the Bland AI router
+app.include_router(bland_router)
 
 # Add a middleware to handle MongoDB ObjectId
 @app.middleware("http")
@@ -58,7 +62,7 @@ async def update_hackathon_entry(entry_id: str, data: Dict[str, Any]):
     result = await db_manager.update_hackathon_entry(entry_id, data)
     if not result.get("success", False):
         raise HTTPException(
-            status_code=400 if "Invalid" in result.get("message", "") else 404, 
+            status_code=400 if "Invalid" in result.get("message", "") else 404,
             detail=result.get("message", "Error updating entry")
         )
     return CustomJSONResponse(content=result)
@@ -69,7 +73,7 @@ async def delete_hackathon_entry(entry_id: str):
     result = await db_manager.delete_hackathon_entry(entry_id)
     if not result.get("success", False):
         raise HTTPException(
-            status_code=400 if "Invalid" in result.get("message", "") else 404, 
+            status_code=400 if "Invalid" in result.get("message", "") else 404,
             detail=result.get("message", "Error deleting entry")
         )
     return CustomJSONResponse(content=result)
