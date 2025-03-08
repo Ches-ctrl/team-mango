@@ -127,6 +127,39 @@ def save_call_data(call_response: Dict[str, Any], call_request: Dict[str, Any]) 
     with open(file_path, "w") as f:
         json.dump(existing_data, f, indent=2)
 
+def save_call_analysis(analysis_response: Dict[str, Any], call_id: str) -> None:
+    """
+    Save call analysis data to the call_analysis.json file
+    """
+    file_path = os.path.join(os.path.dirname(__file__), "call_analysis.json")
+
+    # Add timestamp and call_id to the analysis data
+    analysis_data = analysis_response.copy()
+    analysis_data["call_id"] = call_id
+    analysis_data["timestamp"] = datetime.datetime.now().isoformat()
+
+    # Load existing data if file exists and has content
+    existing_data = {}
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        try:
+            with open(file_path, "r") as f:
+                existing_data = json.load(f)
+        except json.JSONDecodeError:
+            # If file exists but is not valid JSON, start with empty dict
+            existing_data = {}
+
+    # If existing_data is not a dictionary, initialize it as one
+    if not isinstance(existing_data, dict):
+        existing_data = {}
+
+    # Create a unique key for this analysis
+    analysis_key = f"{call_id}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+    existing_data[analysis_key] = analysis_data
+
+    # Save to file
+    with open(file_path, "w") as f:
+        json.dump(existing_data, f, indent=2)
+
 @router.post("/calls", response_model=BlandAICallResponse)
 async def send_call(request: BlandAICallRequest):
     """
@@ -231,6 +264,49 @@ async def get_all_calls():
     else:
         return {"calls": {}, "count": 0, "message": "No call data available"}
 
+@router.get("/calls/analysis")
+async def get_call_analysis():
+    """
+    Get the most recent call analysis data from the call_analysis.json file
+    """
+    file_path = os.path.join(os.path.dirname(__file__), "call_analysis.json")
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        try:
+            with open(file_path, "r") as f:
+                analysis_data = json.load(f)
+            return analysis_data
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {"status": "error", "error": "Error reading call analysis file"}
+    else:
+        return {"status": "error", "message": "No call analysis data available"}
+
+@router.get("/calls/{call_id}/analysis")
+async def get_call_analysis_by_id(call_id: str):
+    """
+    Get call analysis data for a specific call ID
+    """
+    file_path = os.path.join(os.path.dirname(__file__), "call_analysis.json")
+    if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+        try:
+            with open(file_path, "r") as f:
+                analysis_data = json.load(f)
+
+            # Filter analyses for the specified call_id
+            call_analyses = {}
+            for key, analysis in analysis_data.items():
+                if analysis.get("call_id") == call_id:
+                    call_analyses[key] = analysis
+
+            if call_analyses:
+                return {"call_id": call_id, "analyses": call_analyses, "count": len(call_analyses)}
+            else:
+                return {"status": "error", "message": f"No analysis found for call ID: {call_id}"}
+
+        except (json.JSONDecodeError, FileNotFoundError):
+            return {"status": "error", "error": "Error reading call analysis file"}
+    else:
+        return {"status": "error", "message": "No call analysis data available"}
+
 @router.post("/calls/analyze")
 async def analyze_call(request: BlandAIAnalyzeRequest):
     """
@@ -287,6 +363,38 @@ async def analyze_call(request: BlandAIAnalyzeRequest):
             with open(file_path, "w") as f:
                 json.dump(call_data, f, indent=2)
 
+            # Save analysis results to call_analysis.json
+            # save_call_analysis(response, most_recent_call_id)
+
+            # Save directly to call_analysis.json (simple version)
+            analysis_file_path = os.path.join(os.path.dirname(__file__), "call_analysis.json")
+
+            # Load existing data if file exists
+            existing_analysis = {}
+            if os.path.exists(analysis_file_path) and os.path.getsize(analysis_file_path) > 0:
+                try:
+                    with open(analysis_file_path, "r") as f:
+                        existing_analysis = json.load(f)
+                except json.JSONDecodeError:
+                    # If file exists but is not valid JSON, start with empty dict
+                    existing_analysis = {}
+
+            # If existing_analysis is not a dictionary, initialize it as one
+            if not isinstance(existing_analysis, dict):
+                existing_analysis = {}
+
+            # Create a unique key for this analysis using call_id and timestamp
+            analysis_key = f"{most_recent_call_id}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+            # Add the new analysis to the existing data
+            existing_analysis[analysis_key] = response
+
+            # Write the updated data back to the file
+            with open(analysis_file_path, "w") as f:
+                json.dump(existing_analysis, f, indent=2)
+
+            print(f"Saved analysis to {analysis_file_path} with key {analysis_key}")
+
             return {
                 "call_id": most_recent_call_id,
                 "analysis": response
@@ -294,6 +402,44 @@ async def analyze_call(request: BlandAIAnalyzeRequest):
 
         except HTTPException as e:
             # If the API call fails, return the error
+            error_response = {
+                "status": "error",
+                "error": e.detail,
+                "call_id": most_recent_call_id
+            }
+
+            # Save error to call_analysis.json
+            # save_call_analysis(error_response, most_recent_call_id)
+
+            # Save directly to call_analysis.json
+            analysis_file_path = os.path.join(os.path.dirname(__file__), "call_analysis.json")
+
+            # Load existing data if file exists
+            existing_analysis = {}
+            if os.path.exists(analysis_file_path) and os.path.getsize(analysis_file_path) > 0:
+                try:
+                    with open(analysis_file_path, "r") as f:
+                        existing_analysis = json.load(f)
+                except json.JSONDecodeError:
+                    # If file exists but is not valid JSON, start with empty dict
+                    existing_analysis = {}
+
+            # If existing_analysis is not a dictionary, initialize it as one
+            if not isinstance(existing_analysis, dict):
+                existing_analysis = {}
+
+            # Create a unique key for this analysis using call_id and timestamp
+            analysis_key = f"{most_recent_call_id}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+            # Add the new analysis to the existing data
+            existing_analysis[analysis_key] = error_response
+
+            # Write the updated data back to the file
+            with open(analysis_file_path, "w") as f:
+                json.dump(existing_analysis, f, indent=2)
+
+            print(f"Saved analysis to {analysis_file_path} with key {analysis_key}")
+
             return {
                 "call_id": most_recent_call_id,
                 "status": "error",
@@ -302,3 +448,38 @@ async def analyze_call(request: BlandAIAnalyzeRequest):
 
     except (json.JSONDecodeError, FileNotFoundError):
         raise HTTPException(status_code=500, detail="Error reading call data file")
+
+@router.post("/calls/{call_id}/save_analysis")
+async def save_analysis(call_id: str, analysis_data: Dict[str, Any]):
+    """
+    Save analysis data directly to call_analysis.json
+    """
+    analysis_file_path = os.path.join(os.path.dirname(__file__), "call_analysis.json")
+
+    # Load existing data if file exists
+    existing_analysis = {}
+    if os.path.exists(analysis_file_path) and os.path.getsize(analysis_file_path) > 0:
+        try:
+            with open(analysis_file_path, "r") as f:
+                existing_analysis = json.load(f)
+        except json.JSONDecodeError:
+            # If file exists but is not valid JSON, start with empty dict
+            existing_analysis = {}
+
+    # If existing_analysis is not a dictionary, initialize it as one
+    if not isinstance(existing_analysis, dict):
+        existing_analysis = {}
+
+    # Create a unique key for this analysis using call_id and timestamp
+    analysis_key = f"{call_id}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    # Add the new analysis to the existing data
+    existing_analysis[analysis_key] = analysis_data
+
+    # Write the updated data back to the file
+    with open(analysis_file_path, "w") as f:
+        json.dump(existing_analysis, f, indent=2)
+
+    print(f"Saved analysis to {analysis_file_path} with key {analysis_key}")
+
+    return {"status": "success", "message": f"Analysis saved with key {analysis_key}"}

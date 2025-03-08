@@ -58,5 +58,35 @@
     "status": "success",
     "error": null,
     "timestamp": "2025-03-08T14:57:05.210866"
+  },
+  "error_20250308150113": {
+    "request": {
+      "phone_number": "+4477412110675",
+      "task": "This spreadsheet contains contact information for various professionals.",
+      "voice": "Josh",
+      "wait_for_greeting": true
+    },
+    "response": {
+      "status": "error",
+      "error": "Bland AI API error: Invalid phone number. `+4477412110675` has these validation errors: TOO_LONG"
+    },
+    "status": "error",
+    "error": "Bland AI API error: Invalid phone number. `+4477412110675` has these validation errors: TOO_LONG",
+    "timestamp": "2025-03-08T15:01:13.167368"
+  },
+  "aecef988-a4f9-4d90-8c35-4bacabf60652": {
+    "request": {
+      "phone_number": "+447412110675",
+      "task": "This spreadsheet contains contact information for various professionals.",
+      "voice": "Josh",
+      "wait_for_greeting": true
+    },
+    "response": {
+      "status": "success",
+      "call_id": "aecef988-a4f9-4d90-8c35-4bacabf60652"
+    },
+    "status": "success",
+    "error": null,
+    "timestamp": "2025-03-08T15:04:44.327332"
   }
 }
