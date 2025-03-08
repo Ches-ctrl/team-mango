@@ -41,6 +41,10 @@ class BlandAICallResponse(BaseModel):
     call_id: Optional[str] = None
     error: Optional[str] = None
 
+class BlandAIAnalyzeRequest(BaseModel):
+    goal: str = Field(..., description="The goal for analyzing the call")
+    questions: List[List[str]] = Field(..., description="List of questions for analyzing the call")
+
 # Helper function to make API calls to Bland AI
 def call_bland_api(endpoint: str, method: str = "GET", data: Dict[str, Any] = None) -> Dict[str, Any]:
     """
@@ -226,3 +230,75 @@ async def get_all_calls():
             return {"calls": {}, "count": 0, "error": "Error reading call data file"}
     else:
         return {"calls": {}, "count": 0, "message": "No call data available"}
+
+@router.post("/calls/analyze")
+async def analyze_call(request: BlandAIAnalyzeRequest):
+    """
+    Analyze the most recent call using Bland AI's analyze API
+    """
+    # Get the most recent call from the JSON file
+    file_path = os.path.join(os.path.dirname(__file__), "call_data.json")
+    if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+        raise HTTPException(status_code=404, detail="No call data available")
+
+    try:
+        with open(file_path, "r") as f:
+            call_data = json.load(f)
+
+        if not call_data:
+            raise HTTPException(status_code=404, detail="No call data available")
+
+        # Find the most recent call by timestamp
+        most_recent_call = None
+        most_recent_timestamp = None
+
+        for call_id, call_info in call_data.items():
+            # Skip entries without a call_id (error entries)
+            if call_id.startswith("error_"):
+                continue
+
+            timestamp = call_info.get("timestamp")
+            if timestamp and (most_recent_timestamp is None or timestamp > most_recent_timestamp):
+                most_recent_timestamp = timestamp
+                most_recent_call = call_info
+                most_recent_call_id = call_id
+
+        if not most_recent_call or not most_recent_call_id:
+            raise HTTPException(status_code=404, detail="No valid call found")
+
+        # Prepare the analyze request
+        analyze_data = {
+            "goal": request.goal,
+            "questions": request.questions
+        }
+
+        # Make API call to Bland AI analyze endpoint
+        try:
+            response = call_bland_api(f"calls/{most_recent_call_id}/analyze", method="POST", data=analyze_data)
+
+            # Update the call data with analysis results
+            call_data[most_recent_call_id]["analysis"] = {
+                "request": analyze_data,
+                "response": response,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+
+            # Save the updated data back to the file
+            with open(file_path, "w") as f:
+                json.dump(call_data, f, indent=2)
+
+            return {
+                "call_id": most_recent_call_id,
+                "analysis": response
+            }
+
+        except HTTPException as e:
+            # If the API call fails, return the error
+            return {
+                "call_id": most_recent_call_id,
+                "status": "error",
+                "error": e.detail
+            }
+
+    except (json.JSONDecodeError, FileNotFoundError):
+        raise HTTPException(status_code=500, detail="Error reading call data file")
