@@ -39,6 +39,7 @@ function App() {
         onPopulate={handlePopulate}
         onShowHistory={handleShowHistory}
         contextText={contextText}
+        spreadsheetRef={spreadsheetRef}
       />
       <div className="flex-1 relative overflow-hidden">
         <Spreadsheet ref={spreadsheetRef} />

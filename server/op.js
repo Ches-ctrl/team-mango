@@ -31,7 +31,7 @@ async function applyOp(collection, ops) {
           filter,
           update: {
             $inc: {
-              [`celldata.$[e].${field}`]: op.value.count,
+              [`data.$[e].${field}`]: op.value.count,
             },
           },
           arrayFilters: [{ [`e.${field}`]: { $gte: insertPos } }],
@@ -49,7 +49,7 @@ async function applyOp(collection, ops) {
             filter,
             update: {
               $pull: {
-                celldata: {
+                data: {
                   [field]: {
                     $gte: op.value.start,
                     $lte: op.value.end,
@@ -65,7 +65,7 @@ async function applyOp(collection, ops) {
             filter,
             update: {
               $inc: {
-                [`celldata.$[e].${field}`]: -(
+                [`data.$[e].${field}`]: -(
                   op.value.end -
                   op.value.start +
                   1
@@ -95,7 +95,7 @@ async function applyOp(collection, ops) {
       /**
        * cell update
        */
-      const key = ["celldata.$[e].v", ...path.slice(3)].join(".");
+      const key = ["data.$[e].v", ...path.slice(3)].join(".");
       const [, r, c] = path;
       const options = { arrayFilters: [{ "e.r": r, "e.c": c }] };
       const updater =
@@ -114,7 +114,7 @@ async function applyOp(collection, ops) {
         const cellExists = await collection.countDocuments(
           {
             ...filter,
-            celldata: {
+            data: {
               $elemMatch: {
                 r,
                 c,
@@ -133,7 +133,7 @@ async function applyOp(collection, ops) {
               filter,
               update: {
                 $addToSet: {
-                  celldata: {
+                  data: {
                     r,
                     c,
                     v: op.value,

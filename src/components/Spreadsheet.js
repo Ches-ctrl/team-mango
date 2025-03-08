@@ -7,7 +7,7 @@ const Spreadsheet = forwardRef((props, ref) => {
   const [workbookData, setWorkbookData] = useState([
     {
       name: "Sheet1",
-      celldata: [],
+      data: [], // Using 'data' instead of 'celldata' to match Fortune Sheet's format
       id: "sheet1", // Fortune Sheet requires unique IDs
       order: 0,
       status: 1, // 1 means visible
@@ -65,29 +65,98 @@ const Spreadsheet = forwardRef((props, ref) => {
       setWorkbookData(newData);
     },
     populateData: (dummyData) => {
-      // Convert the react-spreadsheet data format to Fortune Sheet format
-      const celldata = [];
+      console.log("Populating data:", dummyData);
       
+      // Fortune Sheet uses a 2D array format for its data
+      // Initialize 2D array with appropriate size
+      const numRows = dummyData.length;
+      const numCols = dummyData.reduce((max, row) => Math.max(max, row.length), 0);
+      
+      // Create empty 2D array
+      const newData = Array(numRows).fill().map(() => Array(numCols).fill(null));
+      
+      // Fill the 2D array with data from dummyData
       dummyData.forEach((row, r) => {
         row.forEach((cell, c) => {
-          if (cell.value) {
-            celldata.push({
-              r, // row
-              c, // column
-              v: { // value object
-                v: cell.value, // cell value
-                m: cell.value, // display value (can be formatted)
-                ct: { t: "s", fa: "General" }, // cell type: s=string
-              }
-            });
+          if (cell && cell.value !== undefined) {
+            // Create cell with value
+            newData[r][c] = {
+              v: cell.value, // cell value
+              m: cell.value, // display value
+              ct: { t: "s", fa: "General" } // cell type: s=string
+            };
           }
         });
       });
       
+      console.log("Converted data:", newData);
+      
       // Update the workbook with the converted data
       const newWorkbookData = [...workbookData];
-      newWorkbookData[0].celldata = celldata;
+      newWorkbookData[0].data = newData;
       setWorkbookData(newWorkbookData);
+    },
+    getColumnData: (columnIndex) => {
+      // Get data from a specific column (0 = A, 1 = B, etc.)
+      console.log("Getting data for column", columnIndex);
+      console.log("Current workbook data:", workbookData);
+      
+      if (!workbookData || !workbookData[0]) {
+        console.log("No workbook data found");
+        return [];
+      }
+      
+      // Extract the sheet data from the first worksheet
+      const sheetData = workbookData[0].data || [];
+      console.log("Sheet data:", sheetData);
+      
+      if (!sheetData || !Array.isArray(sheetData)) {
+        console.log("No valid sheet data found");
+        return [];
+      }
+      
+      // Extract column data from the 2D array
+      const columnData = [];
+      
+      for (let rowIndex = 0; rowIndex < sheetData.length; rowIndex++) {
+        const row = sheetData[rowIndex];
+        if (!row) continue;
+        
+        const cell = row[columnIndex];
+        console.log(`Examining cell at row ${rowIndex}, column ${columnIndex}:`, cell);
+        
+        if (cell) {
+          let value;
+          
+          // Handle different cell formats
+          if (typeof cell === 'object' && cell !== null) {
+            if ('v' in cell) {
+              value = cell.v;
+            } else if ('m' in cell) {
+              value = cell.m;
+            } else {
+              value = JSON.stringify(cell);
+            }
+          } else {
+            value = cell;
+          }
+          
+          console.log(`Found value at row ${rowIndex}, column ${columnIndex}: ${value}`);
+          
+          columnData.push({
+            rowIndex: rowIndex,
+            value: value
+          });
+        }
+      }
+      
+      console.log(`Extracted ${columnData.length} values from column ${columnIndex}:`, columnData);
+      return columnData;
+    },
+    getWorkbookData: () => {
+      // Return the full workbook data for direct access
+      console.log("Getting full workbook data:", workbookData);
+      return workbookData;
     }
   }));
 
