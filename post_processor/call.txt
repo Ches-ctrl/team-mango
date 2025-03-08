@@ -13,7 +13,7 @@ curl -X 'POST' \
 curl -X 'POST' \
   'https://api.bland.ai/v1/calls/949de306-c862-4081-92f7-12dc363dd19b/analyze' \
   -H 'Content-Type: application/json' \
-  -H 'authorization: org_b54c7f78c14d997afe455f85f8d8170d2203237a51011baa75612c2d6cb6429b7e7fe302c5d5da760e5f69' \
+  -H 'authorization: BLANDAI_API_KEY' \
   -d '{
   "goal": "You are a friendly assistant. You are evaluating participant satisfaction with the Sequel x Inaugural hackathon experience.",
   "questions": [
