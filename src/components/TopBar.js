@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Navbar, Dropdown, Spinner, Toast } from 'flowbite-react';
-import { FaPhone } from 'react-icons/fa';
+import { FaPhone, FaTable } from 'react-icons/fa';
 import { FaClockRotateLeft, FaCheck, FaTriangleExclamation } from "react-icons/fa6";
 
 const TopBar = ({ onPopulate, onShowHistory, contextText, spreadsheetRef }) => {
@@ -189,6 +189,64 @@ const TopBar = ({ onPopulate, onShowHistory, contextText, spreadsheetRef }) => {
     }
   };
 
+  // Function to test updating cells
+  const handleUpdateCells = async () => {
+    try {
+      // Get the current workbook data to find the first sheet ID
+      const workbookData = spreadsheetRef.current?.getWorkbookData();
+      if (!workbookData || workbookData.length === 0) {
+        setToastMessage('No sheet available');
+        setToastType('error');
+        setShowToast(true);
+        return;
+      }
+      
+      const sheetId = workbookData[0].id;
+      
+      // Make a direct API call to update cells
+      const response = await fetch('http://localhost:5003/api/update-cells', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          sheet_id: sheetId,
+          row: 1,
+          values: {
+            0: "Updated cell A2",
+            1: "Updated cell B2",
+            5: "Updated cell F2"
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update cells');
+      }
+      
+      const result = await response.json();
+      console.log('API response:', result);
+      
+      // Also update the cells locally in the spreadsheet
+      if (spreadsheetRef.current) {
+        spreadsheetRef.current.updateCells(sheetId, 1, {
+          0: "Updated cell A2",
+          1: "Updated cell B2",
+          5: "Updated cell F2"
+        });
+      }
+      
+      setToastMessage('Cells updated successfully!');
+      setToastType('success');
+      setShowToast(true);
+    } catch (error) {
+      console.error('Error updating cells:', error);
+      setToastMessage('Failed to update cells: ' + error.message);
+      setToastType('error');
+      setShowToast(true);
+    }
+  };
+
   return (
     <>
       <Navbar className="bg-white border-b border-gray-200 shadow-sm py-2.5 px-4" fluid>
@@ -233,6 +291,17 @@ const TopBar = ({ onPopulate, onShowHistory, contextText, spreadsheetRef }) => {
               <div className="flex items-center">
                 <FaClockRotateLeft className="w-4 h-4 mr-2" />
                 <span>History</span>
+              </div>
+            </Button>
+            
+            <Button 
+              onClick={handleUpdateCells}
+              color="info"
+              className="flex items-center justify-center"
+            >
+              <div className="flex items-center">
+                <FaTable className="w-4 h-4 mr-2" />
+                <span>Update Cells</span>
               </div>
             </Button>
             

@@ -2,161 +2,93 @@ import React, { forwardRef, useImperativeHandle, useState, useEffect } from 'rea
 import { Workbook } from "@fortune-sheet/react";
 import "@fortune-sheet/react/dist/index.css";
 
-const Spreadsheet = forwardRef((props, ref) => {
+const Spreadsheet = forwardRef(({ onContextUpdate }, ref) => {
   // Initial data structure for Fortune Sheet
   const [workbookData, setWorkbookData] = useState([
     {
       name: "Sheet1",
-      data: [], // Using 'data' instead of 'celldata' to match Fortune Sheet's format
-      id: "sheet1", // Fortune Sheet requires unique IDs
-      order: 0,
-      status: 1, // 1 means visible
-      row: 100,  // More rows for a fuller sheet
-      column: 26, // A to Z columns
-      config: {
-        rowHeight: 32,
-      },
+      id: "sheet1",
+      data: [] // Initial empty cells
     }
   ]);
 
   // Add effect to fix styling issues that can't be addressed through options
   useEffect(() => {
-    // Directly target and fix any elements causing gaps
     const fixStylingGaps = () => {
-      // Target sheet tabs area which often causes gaps
-      const sheetTabs = document.querySelectorAll('.luckysheet-sheet-area, .luckysheet-sheet-container');
-      sheetTabs.forEach(el => {
-        if (el) {
-          el.style.margin = '0';
-          el.style.padding = '0';
-          el.style.height = 'auto';
-          el.style.minHeight = '0';
-          el.style.maxHeight = '30px'; // Limit the height
-          el.style.border = 'none';
-          el.style.boxSizing = 'border-box';
-        }
-      });
-
-      // Fix any scrollbars
-      const scrollbars = document.querySelectorAll('.luckysheet-scrollbar');
-      scrollbars.forEach(el => {
-        if (el) el.style.display = 'none';
-      });
+      // Fix for bottom gap
+      const bottomBar = document.querySelector('.fortune-sheet-container-bottom');
+      if (bottomBar) {
+        bottomBar.style.display = 'none';
+      }
+      
+      // Fix for right gap
+      const rightBar = document.querySelector('.fortune-sheet-container-right');
+      if (rightBar) {
+        rightBar.style.display = 'none';
+      }
     };
-
-    // Run immediately and after a short delay to ensure it applies after render
-    fixStylingGaps();
-    const timer = setTimeout(fixStylingGaps, 100);
+    
+    // Apply fixes after a short delay to ensure DOM is ready
+    const timer = setTimeout(fixStylingGaps, 500);
     
     return () => clearTimeout(timer);
   }, []);
 
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
-    addRow: () => {
-      // Fortune Sheet handles rows internally, but we could customize if needed
-      console.log("Add row command received");
-    },
-    setAsHeader: (rowIndex) => {
-      // Set formatting for header row
-      const newData = [...workbookData];
-      // This would need more implementation based on Fortune Sheet's API
-      console.log("Set header command received for row", rowIndex);
-      setWorkbookData(newData);
-    },
-    populateData: (dummyData) => {
-      console.log("Populating data:", dummyData);
-      
-      // Fortune Sheet uses a 2D array format for its data
-      // Initialize 2D array with appropriate size
-      const numRows = dummyData.length;
-      const numCols = dummyData.reduce((max, row) => Math.max(max, row.length), 0);
-      
-      // Create empty 2D array
-      const newData = Array(numRows).fill().map(() => Array(numCols).fill(null));
-      
-      // Fill the 2D array with data from dummyData
-      dummyData.forEach((row, r) => {
-        row.forEach((cell, c) => {
-          if (cell && cell.value !== undefined) {
-            // Create cell with value
-            newData[r][c] = {
-              v: cell.value, // cell value
-              m: cell.value, // display value
-              ct: { t: "s", fa: "General" } // cell type: s=string
-            };
-          }
-        });
-      });
-      
-      console.log("Converted data:", newData);
-      
-      // Update the workbook with the converted data
-      const newWorkbookData = [...workbookData];
-      newWorkbookData[0].data = newData;
-      setWorkbookData(newWorkbookData);
-    },
-    getColumnData: (columnIndex) => {
-      // Get data from a specific column (0 = A, 1 = B, etc.)
-      console.log("Getting data for column", columnIndex);
-      console.log("Current workbook data:", workbookData);
-      
-      if (!workbookData || !workbookData[0]) {
-        console.log("No workbook data found");
-        return [];
-      }
-      
-      // Extract the sheet data from the first worksheet
-      const sheetData = workbookData[0].data || [];
-      console.log("Sheet data:", sheetData);
-      
-      if (!sheetData || !Array.isArray(sheetData)) {
-        console.log("No valid sheet data found");
-        return [];
-      }
-      
-      // Extract column data from the 2D array
-      const columnData = [];
-      
-      for (let rowIndex = 0; rowIndex < sheetData.length; rowIndex++) {
-        const row = sheetData[rowIndex];
-        if (!row) continue;
-        
-        const cell = row[columnIndex];
-        console.log(`Examining cell at row ${rowIndex}, column ${columnIndex}:`, cell);
-        
-        if (cell) {
-          let value;
-          
-          // Handle different cell formats
-          if (typeof cell === 'object' && cell !== null) {
-            if ('v' in cell) {
-              value = cell.v;
-            } else if ('m' in cell) {
-              value = cell.m;
-            } else {
-              value = JSON.stringify(cell);
-            }
-          } else {
-            value = cell;
-          }
-          
-          console.log(`Found value at row ${rowIndex}, column ${columnIndex}: ${value}`);
-          
-          columnData.push({
-            rowIndex: rowIndex,
-            value: value
-          });
-        }
-      }
-      
-      console.log(`Extracted ${columnData.length} values from column ${columnIndex}:`, columnData);
-      return columnData;
-    },
+    // Get the current workbook data
     getWorkbookData: () => {
-      // Return the full workbook data for direct access
       console.log("Getting full workbook data:", workbookData);
       return workbookData;
+    },
+    
+    // Function to update cells directly
+    updateCells: (sheetId, row, values) => {
+      console.log('Updating cells:', { sheetId, row, values });
+      
+      setWorkbookData(prevData => {
+        const newData = [...prevData];
+        const sheetIndex = newData.findIndex(sheet => sheet.id === sheetId);
+        
+        if (sheetIndex === -1) return prevData;
+        
+        const sheet = { ...newData[sheetIndex] };
+        
+        // Convert to data format that FortuneSheet uses
+        if (!sheet.data) {
+          sheet.data = [];
+        }
+        
+        // Update each cell
+        Object.entries(values).forEach(([col, value]) => {
+          if (value === "none") return;
+          
+          const colIndex = parseInt(col, 10);
+          
+          // Find existing cell or create new one
+          const existingCellIndex = sheet.data.findIndex(
+            cell => cell.r === row && cell.c === colIndex
+          );
+          
+          if (existingCellIndex >= 0) {
+            // Update existing cell
+            sheet.data[existingCellIndex] = {
+              ...sheet.data[existingCellIndex],
+              v: value
+            };
+          } else {
+            // Add new cell
+            sheet.data.push({
+              r: row,
+              c: colIndex,
+              v: value
+            });
+          }
+        });
+        
+        newData[sheetIndex] = sheet;
+        return newData;
+      });
     }
   }));
 

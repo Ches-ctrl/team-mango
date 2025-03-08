@@ -3,7 +3,7 @@
  * Based on Fortune Sheet's operation model.
  */
 const _ = require('lodash');
-const { Sheet } = require('./models/Sheet');
+const Sheet = require('./models/Sheet');
 
 /**
  * @param {import("mongodb").Collection} collection mongodb collection
@@ -224,7 +224,7 @@ async function applyOperations(sheetId, operations, context) {
   
   try {
     // Find the sheet
-    const sheet = await Sheet.findOne({ _id: sheetId });
+    const sheet = await Sheet.findOne({ sheetId });
     
     if (!sheet) {
       console.error(`Sheet ${sheetId} not found`);

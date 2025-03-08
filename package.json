@@ -24,7 +24,8 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0",
     "react-scripts": "5.0.1",
-    "react-spreadsheet": "^0.9.5"
+    "react-spreadsheet": "^0.9.5",
+    "socket.io-client": "^4.8.1"
   },
   "eslintConfig": {
     "extends": [
