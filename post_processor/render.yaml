@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: fastapi-bland-ai
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: MONGODB_URL
+        sync: false
+      - key: BLAND_API_KEY
+        sync: false
+      - key: OPENAIAPI_KEY
+        sync: false
