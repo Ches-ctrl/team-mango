@@ -1,0 +1,56 @@
+{
+  "name": "team-mango",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Voice AI-enabled spreadsheet for the Sequel x Inaugural AI Agent Hack",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "cd server && npm run dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortune-sheet/react": "^1.0.2",
+    "axios": "^1.8.2",
+    "flowbite": "^3.1.2",
+    "flowbite-react": "^0.10.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.5.0",
+    "react-scripts": "5.0.1",
+    "react-spreadsheet": "^0.9.5",
+    "socket.io-client": "^4.8.1",
+    "uuid": "^11.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.1"
+  }
+}

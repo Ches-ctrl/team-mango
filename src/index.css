@@ -1,0 +1,349 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom styles for react-spreadsheet */
+.Spreadsheet {
+  --cell-height: 36px;
+  --cell-width: 150px;
+  --cell-border-color: #e5e7eb;
+  --cell-background-color: white;
+  --cell-text-color: #374151;
+  --selection-border-color: #2563eb;
+  --selection-background-color: rgba(59, 130, 246, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+}
+
+.Spreadsheet__cell {
+  border: 1px solid var(--cell-border-color);
+  box-sizing: border-box;
+}
+
+.Spreadsheet__cell--selected {
+  box-shadow: 0 0 0 2px var(--selection-border-color);
+  background-color: var(--selection-background-color);
+  z-index: 2;
+}
+
+.Spreadsheet__active-cell {
+  box-shadow: 0 0 0 2px var(--selection-border-color);
+  z-index: 3;
+}
+
+.Spreadsheet__header {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.Spreadsheet__row-header,
+.Spreadsheet__column-header {
+  border: 1px solid var(--cell-border-color);
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* Spreadsheet container for consistent sizing */
+.spreadsheet-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+/* Modern spreadsheet styling */
+.modern-spreadsheet .Spreadsheet__cell {
+  border: 1px solid var(--cell-border-color);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* Column resizer styling */
+.column-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.Spreadsheet__column-header {
+  position: relative;
+  transition: width 0.1s ease;
+}
+
+.Spreadsheet__column-header.resizing {
+  background-color: #e5e7eb;
+}
+
+/* Phantom row for adding new rows */
+.add-row-phantom {
+  border-top: 1px dashed #d1d5db;
+  margin-top: 8px;
+}
+
+/* Make active cell stand out more */
+.Spreadsheet__active-cell {
+  box-shadow: 0 0 0 2px #3b82f6;
+  z-index: 3;
+}
+
+/* Enhanced header appearance */
+.Spreadsheet__header,
+.Spreadsheet__row-header,
+.Spreadsheet__column-header {
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #4b5563;
+  border: 1px solid var(--cell-border-color);
+  height: 40px; /* Taller headers for better visibility */
+}
+
+/* Selection styling */
+.Spreadsheet__cell--selected {
+  box-shadow: 0 0 0 1px #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Empty cell styling */
+.Spreadsheet__cell:empty::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  background-color: #f9fafb;
+}
+
+/* Make sure icons are consistent size throughout the app */
+.icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Green theme customization */
+.bg-primary {
+  background-color: #15803d !important;
+}
+
+.hover\:bg-primary:hover {
+  background-color: #166534 !important;
+}
+
+/* Base Fortune Sheet container */
+.fortune-sheet-container {
+  border: none !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Basic grid sizing */
+.luckysheet-grid-container {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Simply hide sheet tabs completely */
+.fortune-sheet-container .luckysheet-sheet-area,
+.fortune-sheet-container .luckysheet-sheet-list,
+.fortune-sheet-container .luckysheet-sheets-add,
+.fortune-sheet-container .luckysheet-sheets-more,
+.fortune-sheet-container .luckysheet-sheet-container,
+.fortune-sheet-container .luckysheet-sheets-item {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Hide all scrollbars */
+.fortune-sheet-container .luckysheet-scrollbars-visible,
+.fortune-sheet-container .luckysheet-horizontal-scrollbar,
+.fortune-sheet-container .luckysheet-vertical-scrollbar {
+  display: none !important;
+}
+
+::-webkit-scrollbar {
+  height: 0px !important;
+  width: 0px !important;
+}
+
+/* Context drawer positioning */
+.context-drawer-toggle {
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.context-drawer-content {
+  animation: slideUp 0.3s ease-out;
+  max-height: 40vh;
+  width: 100%;
+  border-top: 1px solid #e5e7eb;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Add to your existing CSS */
+.navbar-fluid {
+  width: 100% !important;
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Override Flowbite container styles */
+.flowbite-navbar > div {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Remove any gaps in the overall container */
+#root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Fix any potential gaps in the spreadsheet */
+.spreadsheet-container,
+.fortune-sheet-container,
+.luckysheet-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Extra specific rules to target and eliminate the bottom gap */
+.fortune-sheet-container .luckysheet-sheet-area,
+.fortune-sheet-container .luckysheet-sheet-content,
+.fortune-sheet-container .luckysheet-sheet-container,
+.fortune-sheet-container .luckysheet-sheets-item,
+.fortune-sheet-container .luckysheet-sheet-container-c {
+  height: auto !important;
+  max-height: 30px !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Target bottom-area elements more specifically */
+.fortune-sheet-container .luckysheet-stat-area {
+  height: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: none !important;
+}
+
+/* Fix for the bottom tab bar */
+.fortune-sheet-container .luckysheet-sheet-area {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  border-top: 1px solid #e0e0e0 !important;
+  z-index: 10 !important;
+}
+
+/* Hide specific elements at the bottom that might be causing gaps */
+.fortune-sheet-container .fortune-sheet-container-c,
+.fortune-sheet-container .fortune-sheet-container-c-active,
+.fortune-sheet-container .fortune-sheet-container-c-time,
+.fortune-sheet-container .luckysheet-row-count-show,
+.fortune-sheet-container .luckysheet-column-count-show {
+  display: none !important;
+}
+
+/* Hide any resize handle elements on the sheet tabs */
+.fortune-sheet-container .luckysheet-sheets-item-border,
+.fortune-sheet-container .luckysheet-sheets-item-resize {
+  display: none !important;
+}
+
+/* Fix the sheet tabs container alignment */
+.fortune-sheet-container .luckysheet-sheet-container-c {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+}
+
+/* Override any bottom margins or paddings globally */
+.fortune-sheet-container * {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Hide all sheet-related elements */
+.fortune-sheet-container .luckysheet-sheet-area,
+.fortune-sheet-container .luckysheet-sheet-list,
+.fortune-sheet-container .luckysheet-sheets-add,
+.fortune-sheet-container .luckysheet-sheets-more,
+.fortune-sheet-container .luckysheet-sheet-container,
+.fortune-sheet-container .luckysheet-sheets-item {
+  display: none !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+}
+
+/* Remove the bottom sheet area completely */
+.fortune-sheet-container .luckysheet-sheet-area {
+  position: absolute !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  min-height: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+} 
