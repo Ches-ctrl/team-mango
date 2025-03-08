@@ -28,5 +28,65 @@
     "status": "success",
     "error": null,
     "timestamp": "2025-03-08T14:27:16.804200"
+  },
+  "949de306-c862-4081-92f7-12dc363dd19b": {
+    "request": {
+      "phone_number": "+447874943523",
+      "task": "You are a friendly assistant.You are evaluating participant satisfaction with the Sequel x Inaugural hackathon experience. Please ask the following questions in order: 1) On a scale of 1-10, how would the participant rate their overall hackathon experience? 2) What aspects of the hackathon did the participant enjoy the most?",
+      "voice": "Josh",
+      "wait_for_greeting": true
+    },
+    "response": {
+      "status": "success",
+      "call_id": "949de306-c862-4081-92f7-12dc363dd19b"
+    },
+    "status": "success",
+    "error": null,
+    "timestamp": "2025-03-08T14:49:06.809426"
+  },
+  "b586cf94-0d90-49fc-8cf7-027e336ee30c": {
+    "request": {
+      "phone_number": "+447412110675",
+      "task": "This spreadsheet contains contact information for various professionals.",
+      "voice": "Josh",
+      "wait_for_greeting": true
+    },
+    "response": {
+      "status": "success",
+      "call_id": "b586cf94-0d90-49fc-8cf7-027e336ee30c"
+    },
+    "status": "success",
+    "error": null,
+    "timestamp": "2025-03-08T14:57:05.210866"
+  },
+  "error_20250308150113": {
+    "request": {
+      "phone_number": "+4477412110675",
+      "task": "This spreadsheet contains contact information for various professionals.",
+      "voice": "Josh",
+      "wait_for_greeting": true
+    },
+    "response": {
+      "status": "error",
+      "error": "Bland AI API error: Invalid phone number. `+4477412110675` has these validation errors: TOO_LONG"
+    },
+    "status": "error",
+    "error": "Bland AI API error: Invalid phone number. `+4477412110675` has these validation errors: TOO_LONG",
+    "timestamp": "2025-03-08T15:01:13.167368"
+  },
+  "aecef988-a4f9-4d90-8c35-4bacabf60652": {
+    "request": {
+      "phone_number": "+447412110675",
+      "task": "This spreadsheet contains contact information for various professionals.",
+      "voice": "Josh",
+      "wait_for_greeting": true
+    },
+    "response": {
+      "status": "success",
+      "call_id": "aecef988-a4f9-4d90-8c35-4bacabf60652"
+    },
+    "status": "success",
+    "error": null,
+    "timestamp": "2025-03-08T15:04:44.327332"
   }
 }
