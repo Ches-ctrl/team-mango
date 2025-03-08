@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List, Any
 from mongo_db import db_manager
 import uvicorn
@@ -31,6 +32,15 @@ class CustomJSONResponse(JSONResponse):
 
 # Initialize FastAPI app
 app = FastAPI(title="Hackathon API")
+
+# Add CORS middleware to allow requests from any origin
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Include the Bland AI router
 app.include_router(bland_router)
