@@ -38,16 +38,10 @@ BLAND_API_KEY=your_bland_ai_api_key
 Start the server with:
 
 ```bash
-uvicorn main:app --reload
+python main.py
 ```
 
-The server will be available at http://localhost:8000
-
-## API Documentation
-
-Once the server is running, you can access the interactive API documentation at:
-- Swagger UI: http://localhost:8000/docs
-- ReDoc: http://localhost:8000/redoc
+The server will be available at http://0.0.0.0:8000/hackathon
 
 ## Endpoints
 
