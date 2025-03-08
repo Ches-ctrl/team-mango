@@ -6,6 +6,7 @@ import uvicorn
 from bson import ObjectId
 import json
 from blandai import router as bland_router
+import os
 
 # Custom JSON encoder for MongoDB ObjectId
 class MongoJSONEncoder(json.JSONEncoder):
@@ -93,4 +94,4 @@ async def get_all_hackathon_entries():
     return CustomJSONResponse(content=results)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
