@@ -1,0 +1,8 @@
+fastapi
+motor
+python-dotenv
+uvicorn
+pydantic
+requests
+bson
+openai
